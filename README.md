@@ -53,6 +53,15 @@ SelectDialog.showModal<String>(
 ); 
 ```
 
+## Quickest example
+```dart
+final selection = SelectDialog.showModal<String>(
+  context,
+  label: "Quickest Example",
+  items: List.generate(50, (index) => "Item $index"),
+);
+```
+
 ### [MORE EXAMPLES](https://github.com/davidsdearaujo/select_dialog/tree/master/example)
 
 

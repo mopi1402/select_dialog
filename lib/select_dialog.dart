@@ -73,7 +73,7 @@ class SelectDialog<T> extends StatefulWidget {
     this.showSelectedItemsFirst = false,
   }) : super(key: key);
 
-  static Future<T?> showModal<T>(
+  static Future<List<T>?> showModal<T>(
     BuildContext context, {
     List<T>? items,
     Object? label,
@@ -108,7 +108,7 @@ class SelectDialog<T> extends StatefulWidget {
       labelWidget = Text(label as String, style: titleStyle);
     }
 
-    return showDialog<T>(
+    return showDialog<List<T>>(
       context: context,
       useRootNavigator: useRootNavigator,
       builder: (context) {
@@ -263,7 +263,7 @@ class _SelectDialogState<T> extends State<SelectDialog<T>> {
                                 : multipleItemsBloc.selectItem(item));
                           } else {
                             onChange?.call(item);
-                            Navigator.pop(context);
+                            Navigator.pop<List<T>>(context, [item]);
                           }
                         },
                       );
@@ -276,7 +276,7 @@ class _SelectDialogState<T> extends State<SelectDialog<T>> {
           if (isMultipleItems)
             okButtonBuilder(context, () {
               multipleItemsBloc.onSelectButtonPressed();
-              Navigator.pop(context);
+              Navigator.pop<List<T>>(context, multipleItemsBloc.selectedItems);
             }),
         ],
       ),
