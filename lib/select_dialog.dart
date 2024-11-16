@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'multiple_items_bloc.dart';
 import 'select_bloc.dart';
 
-typedef Widget SelectOneItemBuilderType<T>(BuildContext context, T item, bool isSelected);
+typedef Widget SelectOneItemBuilderType<T>(
+    BuildContext context, T item, bool isSelected);
 
 typedef Widget ErrorBuilderType<T>(BuildContext context, dynamic exception);
 typedef Widget ButtonBuilderType(BuildContext context, VoidCallback onPressed);
@@ -47,6 +48,9 @@ class SelectDialog<T> extends StatefulWidget {
   final BoxConstraints? constraints;
   final TextEditingController? findController;
 
+  final String? barrierLabel;
+  final bool barrierDismissible;
+
   const SelectDialog({
     Key? key,
     this.itemsList,
@@ -71,7 +75,14 @@ class SelectDialog<T> extends StatefulWidget {
     this.searchBoxMinLines = 1,
     this.findController,
     this.showSelectedItemsFirst = false,
+    this.barrierLabel,
+    this.barrierDismissible = true,
   }) : super(key: key);
+
+  static Widget _defaultTransitionBuilder(
+      BuildContext context, Animation anim1, Animation anim2, Widget child) {
+    return child;
+  }
 
   static Future<T?> showModal<T>(
     BuildContext context, {
@@ -100,6 +111,10 @@ class SelectDialog<T> extends StatefulWidget {
     TextEditingController? findController,
     bool useRootNavigator = false,
     bool showSelectedItemsFirst = false,
+    String? barrierLabel,
+    bool barrierDismissible = true,
+    RouteTransitionsBuilder transitionBuilder =
+        SelectDialog._defaultTransitionBuilder,
   }) {
     Widget? labelWidget;
     if (label is Widget) {
@@ -108,36 +123,44 @@ class SelectDialog<T> extends StatefulWidget {
       labelWidget = Text(label as String, style: titleStyle);
     }
 
-    return showDialog<T>(
+    return showGeneralDialog<T>(
       context: context,
       useRootNavigator: useRootNavigator,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: backgroundColor,
-          title: labelWidget,
-          content: SelectDialog<T>(
-            selectedValue: selectedValue,
-            multipleSelectedValues: multipleSelectedValues,
-            itemsList: items,
-            onChange: onChange,
-            onMultipleItemsChange: onMultipleItemsChange,
-            onFind: onFind,
-            showSearchBox: showSearchBox,
-            itemBuilder: itemBuilder,
-            searchBoxDecoration: searchBoxDecoration,
-            searchHint: searchHint,
-            titleStyle: titleStyle,
-            emptyBuilder: emptyBuilder,
-            okButtonBuilder: okButtonBuilder,
-            loadingBuilder: loadingBuilder,
-            errorBuilder: errorBuilder,
-            constraints: constraints,
-            autofocus: autofocus,
-            alwaysShowScrollBar: alwaysShowScrollBar,
-            searchBoxMaxLines: searchBoxMaxLines,
-            searchBoxMinLines: searchBoxMinLines,
-            findController: findController,
-            showSelectedItemsFirst: showSelectedItemsFirst,
+      barrierLabel: barrierLabel ??
+          MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierDismissible: barrierDismissible,
+      pageBuilder: (context, anim1, anim2) {
+        return transitionBuilder(
+          context,
+          anim1,
+          anim2,
+          AlertDialog(
+            backgroundColor: backgroundColor,
+            title: labelWidget,
+            content: SelectDialog<T>(
+              selectedValue: selectedValue,
+              multipleSelectedValues: multipleSelectedValues,
+              itemsList: items,
+              onChange: onChange,
+              onMultipleItemsChange: onMultipleItemsChange,
+              onFind: onFind,
+              showSearchBox: showSearchBox,
+              itemBuilder: itemBuilder,
+              searchBoxDecoration: searchBoxDecoration,
+              searchHint: searchHint,
+              titleStyle: titleStyle,
+              emptyBuilder: emptyBuilder,
+              okButtonBuilder: okButtonBuilder,
+              loadingBuilder: loadingBuilder,
+              errorBuilder: errorBuilder,
+              constraints: constraints,
+              autofocus: autofocus,
+              alwaysShowScrollBar: alwaysShowScrollBar,
+              searchBoxMaxLines: searchBoxMaxLines,
+              searchBoxMinLines: searchBoxMinLines,
+              findController: findController,
+              showSelectedItemsFirst: showSelectedItemsFirst,
+            ),
           ),
         );
       },
