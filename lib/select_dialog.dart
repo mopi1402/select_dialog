@@ -117,6 +117,7 @@ class SelectDialog<T> extends StatefulWidget {
     bool barrierDismissible = true,
     RouteTransitionsBuilder transitionBuilder =
         SelectDialog._defaultTransitionBuilder,
+    Duration? transitionDuration,
   }) {
     Widget? labelWidget;
     if (label is Widget) {
@@ -166,6 +167,7 @@ class SelectDialog<T> extends StatefulWidget {
           ),
         );
       },
+      transitionDuration: transitionDuration ?? Duration(milliseconds: 200),
     );
   }
 
